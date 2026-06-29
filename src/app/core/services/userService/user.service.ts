@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SharedService } from '../sharedService/shared.service';
-import { UserResponse } from '../../model/dto/userDTO/userResponse.model';
-import { UserUpdateRequest } from '../../model/dto/userDTO/userUpdateRequest.model';
+import { UserResponse } from '../../../features/team/models/userDTO/userResponse.model';
+import { UserUpdateRequest } from '../../../features/team/models/userDTO/userUpdateRequest.model';
 
 
 @Injectable({ providedIn: 'root' })

@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SharedService } from '../sharedService/shared.service';
-import { CommentRequest } from '../../model/dto/commentDTO/commentRequest.model';
-import { CommentResponse } from '../../model/dto/commentDTO/commentResponse.model';
+import { CommentRequest } from '../../../features/reviews/models/commentDTO/commentRequest.model';
+import { CommentResponse } from '../../../features/reviews/models/commentDTO/commentResponse.model';
 
 
 @Injectable({

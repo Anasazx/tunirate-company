@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SharedService } from '../sharedService/shared.service';
 import { Observable } from 'rxjs';
-import { ProductResponse } from '../../model/dto/productDTO/productResponse.model';
-import { DetailedProduct } from '../../model/detailedProduct.model';
-import { ProductRequest } from '../../model/dto/productDTO/productRequest.model';
-import {CompanyProductRequest} from '../../model/dto/productDTO/companyProductRequest.model';
+import { ProductResponse } from '../../../features/products/models/productDTO/productResponse.model';
+import { DetailedProduct } from '../../../features/products/models/detailedProduct.model';
+import { ProductRequest } from '../../../features/products/models/productDTO/productRequest.model';
+import {CompanyProductRequest} from '../../../features/products/models/productDTO/companyProductRequest.model';
 
 
 

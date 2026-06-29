@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SharedService } from '../sharedService/shared.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CompanyDashboardResponse } from '../../model/dto/companyDashboardDTO/companyDashboardResponse.model';
+import { CompanyDashboardResponse } from '../../../features/dashboard/models/companyDashboardDTO/companyDashboardResponse.model';
 
 @Injectable({
   providedIn: 'root'

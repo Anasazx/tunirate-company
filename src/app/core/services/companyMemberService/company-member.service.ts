@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CompanyMemberRequest } from '../../model/dto/companyMemberDTO/companyMemberRequest.model';
+import { CompanyMemberRequest } from '../../../features/team/models/companyMemberDTO/companyMemberRequest.model';
 import { SharedService } from '../sharedService/shared.service';
-import { UpdateMemberRoleRequest } from '../../model/dto/companyMemberDTO/updateMemberRoleRequest.model';
-import { CompanyMemberResponse } from '../../model/dto/companyMemberDTO/CompanyMemberResponse.model';
+import { UpdateMemberRoleRequest } from '../../../features/team/models/companyMemberDTO/updateMemberRoleRequest.model';
+import { CompanyMemberResponse } from '../../../features/team/models/companyMemberDTO/CompanyMemberResponse.model';
 
 
 
@@ -18,7 +18,7 @@ export class CompanyMemberService {
   constructor(private sharedService: SharedService, private http: HttpClient) {
     this.companyMemberUrl = this.sharedService.publicUrl + '/membership';
   }
-  
+
 
 
   // GET /membership/company/{companyId}

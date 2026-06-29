@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SharedService } from '../sharedService/shared.service';
-import { ReviewResponse } from '../../model/dto/reviewDTO/reviewResponse.model';
-import { ReviewRequest } from '../../model/dto/reviewDTO/reviewRequest.model';
+import { ReviewResponse } from '../../../features/reviews/models/reviewDTO/reviewResponse.model';
+import { ReviewRequest } from '../../../features/reviews/models/reviewDTO/reviewRequest.model';
 
 export interface PageResponse<T> {
   content: T[];

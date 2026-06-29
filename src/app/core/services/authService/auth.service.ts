@@ -3,9 +3,9 @@ import { SharedService } from '../sharedService/shared.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { AuthResponse } from '../../model/dto/authDTO/authResponse.model';
-import { LoginRequest } from '../../model/dto/authDTO/loginRequest.model';
-import { RegisterRequest } from '../../model/dto/authDTO/registerRequest.model';
+import { AuthResponse } from '../../../features/auth/models/authDTO/authResponse.model';
+import { LoginRequest } from '../../../features/auth/models/authDTO/loginRequest.model';
+import { RegisterRequest } from '../../../features/auth/models/authDTO/registerRequest.model';
 
 
 
