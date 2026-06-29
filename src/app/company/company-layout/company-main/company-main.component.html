@@ -1,0 +1,15 @@
+<div class="min-h-screen bg-gray-50 pt-16">
+  <!-- Header -->
+  <app-company-header></app-company-header>
+
+  <!-- Sidebar + Content -->
+  <div class="relative pl-64">
+    <!-- Sidebar (fixed) -->
+    <app-company-sidebar></app-company-sidebar>
+
+    <!-- Main Content -->
+    <main class="w-full p-6">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

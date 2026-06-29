@@ -1,0 +1,124 @@
+<div class="space-y-6">
+
+  <!-- HEADER -->
+  <div>
+    <h1 class="text-3xl font-bold">Company Dashboard</h1>
+    <p class="text-slate-500">Overview of your company performance</p>
+  </div>
+
+
+<!-- STATS -->
+<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4" *ngIf="dashboard">
+
+  <!-- PRODUCTS -->
+  <div class="rounded-xl bg-white border border-slate-100 p-5 flex items-center justify-between hover:border-slate-200 transition">
+
+    <div>
+      <p class="text-sm text-slate-500">Total Products</p>
+      <p class="text-2xl font-semibold text-slate-900">
+        {{ dashboard.totalProducts }}
+      </p>
+    </div>
+
+    <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
+      📦
+    </div>
+
+  </div>
+
+  <!-- REVIEWS -->
+  <div class="rounded-xl bg-white border border-slate-100 p-5 flex items-center justify-between hover:border-slate-200 transition">
+
+    <div>
+      <p class="text-sm text-slate-500">Total Reviews</p>
+      <p class="text-2xl font-semibold text-slate-900">
+        {{ dashboard.totalReviews }}
+      </p>
+    </div>
+
+    <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
+      💬
+    </div>
+
+  </div>
+
+  <!-- AVERAGE RATING -->
+  <div class="rounded-xl bg-white border border-slate-100 p-5 flex items-center justify-between hover:border-slate-200 transition">
+
+    <div>
+      <p class="text-sm text-slate-500">Average Rating</p>
+      <p class="text-2xl font-semibold text-slate-900">
+        {{ dashboard.averageRating | number:'1.1-1' }}
+      </p>
+    </div>
+
+    <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
+      ★
+    </div>
+
+  </div>
+
+  <!-- TEAM MEMBERS -->
+  <div class="rounded-xl bg-white border border-slate-100 p-5 flex items-center justify-between hover:border-slate-200 transition">
+
+    <div>
+      <p class="text-sm text-slate-500">Team Members</p>
+      <p class="text-2xl font-semibold text-slate-900">
+        {{ dashboard.totalTeamMembers }}
+      </p>
+    </div>
+
+    <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
+      👤
+    </div>
+
+  </div>
+
+</div>
+
+
+
+  <!-- CONTENT GRID -->
+  <div class="grid gap-6 lg:grid-cols-3">
+
+    <!-- LEFT: chart placeholder -->
+    <div class="lg:col-span-2 rounded-2xl bg-white p-6 shadow-sm">
+      <h2 class="text-lg font-semibold mb-4">Analytics</h2>
+
+      <div class="h-64 flex items-center justify-center text-slate-400 border rounded-xl">
+        Chart will come later 📊
+      </div>
+    </div>
+
+    <!-- RIGHT: recent reviews -->
+    <div class="rounded-2xl bg-white p-6 shadow-sm">
+
+      <h2 class="text-lg font-semibold mb-4">Recent Reviews</h2>
+
+      <div class="space-y-4">
+
+        <div *ngFor="let r of recentReviews"
+             class="border rounded-xl p-3">
+
+          <div class="flex justify-between">
+            <p class="font-semibold">{{ r.user }}</p>
+            <p class="text-yellow-500">{{ r.rating }} ★</p>
+          </div>
+
+          <p class="text-sm text-slate-500">
+            {{ r.product }}
+          </p>
+
+          <p class="text-sm mt-1">
+            {{ r.comment }}
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

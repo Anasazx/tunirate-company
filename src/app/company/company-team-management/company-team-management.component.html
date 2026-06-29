@@ -1,0 +1,226 @@
+<div class="space-y-6">
+
+  <!-- HEADER -->
+  <div class="flex items-center justify-between">
+
+    <div>
+      <h1 class="text-3xl font-bold">Team Management</h1>
+      <p class="text-slate-500">Manage company members and permissions</p>
+    </div>
+
+    <button
+
+      (click)="openInviteModal()"
+
+      class="rounded-xl bg-sky-600 px-5 py-2 text-white font-medium hover:bg-sky-700"
+
+    >
+
+      + Invite Member
+
+    </button>
+
+  </div>
+
+  <!-- FILTERS -->
+  <div class="flex flex-wrap gap-2">
+
+    <button
+      (click)="setFilter(null)"
+      class="rounded-xl px-4 py-2 text-sm border"
+      [ngClass]="!selectedRoleFilter ? 'bg-sky-600 text-white' : 'bg-white'"
+    >
+      All
+    </button>
+
+    <button
+      *ngFor="let r of roles"
+      (click)="setFilter(r)"
+      class="rounded-xl px-4 py-2 text-sm border"
+      [ngClass]="selectedRoleFilter === r ? 'bg-sky-600 text-white' : 'bg-white'"
+    >
+      {{ r }}
+    </button>
+
+  </div>
+
+  <!-- TEAM LIST -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+
+    <table class="w-full text-sm">
+
+      <thead class="bg-slate-50 text-slate-600">
+        <tr>
+          <th class="text-left p-4">Member</th>
+          <th class="text-left p-4">Email</th>
+          <th class="text-left p-4">Role</th>
+          <th class="text-right p-4">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr
+          *ngFor="let m of filteredTeam"
+          class="border-t hover:bg-slate-50"
+        >
+
+          <!-- NAME -->
+          <td class="p-4 font-medium">
+            {{ m.user.name }}
+          </td>
+
+          <!-- EMAIL -->
+          <td class="p-4 text-slate-600">
+            {{ m.user.email }}
+          </td>
+
+          <!-- ROLE -->
+          <td class="p-4">
+            <span
+              class="px-3 py-1 rounded-full text-xs font-medium"
+              [ngClass]="m.companyRole === companyRole.HEAD
+                ? 'bg-yellow-100 text-yellow-700'
+                : 'bg-sky-100 text-sky-700'"
+            >
+              {{ m.companyRole }}
+            </span>
+          </td>
+
+          <!-- ACTIONS -->
+          <td class="p-4 text-right">
+            <button
+              (click)="openRemoveModal(m)"
+              class="text-red-500 hover:underline"
+            >
+              Remove
+            </button>
+          </td>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+
+
+
+<!-- invite card -->
+
+<!-- invite card -->
+<div *ngIf="showInviteModal" class="fixed inset-0 bg-black/50 flex items-center justify-center">
+
+  <div class="bg-white p-6 rounded-xl w-[400px] space-y-4">
+
+    <h2 class="text-lg font-bold">Invite Member</h2>
+
+    <!-- EMAIL -->
+    <input
+      [(ngModel)]="inviteEmail"
+      type="email"
+      placeholder="Enter email"
+      class="w-full border p-2 rounded-lg"
+    />
+
+    <!-- ACTIONS -->
+    <div class="flex justify-end gap-2">
+
+      <button
+        (click)="closeInviteModal()"
+        class="px-4 py-2 border rounded-lg"
+      >
+        Cancel
+      </button>
+
+      <button
+        (click)="inviteMember()"
+        class="px-4 py-2 bg-sky-600 text-white rounded-lg"
+        [disabled]="!inviteEmail.trim()"
+      >
+        Invite
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+<div
+  *ngIf="showRemoveModal"
+  class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+>
+
+  <div class="bg-white rounded-xl shadow-xl w-[420px] p-6">
+
+    <!-- HEADER -->
+    <div class="flex items-center gap-3 mb-4">
+
+      <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-6 h-6 text-red-600"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 9v3.75m0 3.75h.007v.008H12v-.008ZM10.34 3.94 1.82 18a1.875 1.875 0 0 0 1.605 2.813h17.15A1.875 1.875 0 0 0 22.18 18L13.66 3.94a1.875 1.875 0 0 0-3.32 0Z"
+          />
+        </svg>
+
+      </div>
+
+      <div>
+        <h3 class="font-semibold text-lg">
+          Remove Member
+        </h3>
+
+        <p class="text-sm text-gray-500">
+          This action cannot be easily undone.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- BODY -->
+    <p class="text-sm text-gray-700 mb-6">
+      Are you sure you want to remove
+      <span class="font-semibold">
+        {{ selectedMember?.user?.name }}
+      </span>
+      from your company?
+    </p>
+
+    <!-- ACTIONS -->
+    <div class="flex justify-end gap-3">
+
+      <button
+        (click)="closeRemoveModal()"
+        class="px-4 py-2 border rounded-lg hover:bg-gray-50"
+      >
+        Cancel
+      </button>
+
+      <button
+        (click)="confirmRemove()"
+        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+      >
+        Remove Member
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

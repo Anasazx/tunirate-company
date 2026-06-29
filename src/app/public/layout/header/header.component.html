@@ -1,0 +1,254 @@
+<header class="bg-white border-b sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center gap-6">
+
+    <!-- LOGO -->
+    <a routerLink="/" class="font-bold text-xl text-gray-800 shrink-0">
+      ReviewHub
+    </a>
+
+    <!-- SEARCH -->
+    <div class="flex-1 flex justify-center">
+      <div class="relative w-full max-w-md">
+        <input type="text" [(ngModel)]="searchQuery" (input)="onSearch()" placeholder="Search products, companies..."
+               class="w-full rounded-xl border px-4 py-2 text-sm
+                focus:outline-none focus:ring-2 focus:ring-gray-200" />
+
+
+
+        <!-- SUGGESTIONS -->
+        <div *ngIf="suggestions.length"
+             class="absolute left-0 right-0 mt-2 z-50 bg-white border rounded-xl shadow-lg overflow-hidden">
+
+          <button *ngFor="let item of suggestions" (click)="selectSuggestion(item)"
+                  class="w-full flex items-center justify-between gap-3 px-4 py-2 text-sm hover:bg-gray-100">
+
+            <!-- LEFT SIDE -->
+            <div class="flex items-center gap-2">
+
+              <!-- COMPANY LOGO -->
+              <img *ngIf="item.type === 'COMPANY'" [src]="sharedService.getImageUrl(item.logoUrl)"
+                   class="h-6 w-6 rounded-full object-cover border" />
+
+              <span class="flex items-center gap-1">
+                {{ item.name }}
+
+                <!-- VERIFIED BADGE -->
+                <svg *ngIf="item.type === 'COMPANY' && item.verified" xmlns="http://www.w3.org/2000/svg"
+                     viewBox="0 0 24 24" class="h-4 w-4 shrink-0 text-sky-500" fill="currentColor"
+                     title="Verified Company">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M10 12.5 8.5 11 7 12.5 10 15.5 17 8.5 15.5 7z" fill="white" />
+                </svg>
+
+              </span>
+
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <span *ngIf="item.type === 'COMPANY'" class="text-xs text-slate-400 font-medium">
+              company
+            </span>
+
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+
+
+
+    <div class="relative">
+
+      <!-- Notification Bell -->
+      <button *ngIf="currentUser$ | async as user" (click)="toggleInvitations()" class="relative p-2 rounded-full transition
+         hover:bg-gray-100 active:scale-95
+         focus:outline-none focus:ring-2 focus:ring-gray-300">
+
+        <!-- Bell Icon (SVG instead of emoji) -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-700" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor">
+
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0a3 3 0 11-6 0m6 0H9" />
+        </svg>
+
+        <!-- Badge -->
+        <span *ngIf="invitationCount > 0" class="absolute -top-1 -right-1
+           min-w-[18px] h-[18px]
+           flex items-center justify-center
+           text-[10px] font-bold
+           bg-red-500 text-white
+           rounded-full px-1
+           shadow-md">
+          {{ invitationCount }}
+        </span>
+
+      </button>
+
+      <!-- Dropdown -->
+      <div *ngIf="showInvitations" class="absolute right-0 mt-2 w-80 bg-white border rounded-xl shadow-lg z-50">
+
+        <div class="p-3 border-b font-semibold text-sm">
+          Invitations
+        </div>
+
+        <div *ngIf="invitations.length === 0" class="p-4 text-sm text-gray-500">
+          No invitations
+        </div>
+
+        <div *ngFor="let inv of invitations" class="p-3 border-b text-sm">
+
+          <div class="flex justify-between items-start">
+
+            <div>
+              <div class="font-medium">
+                {{ inv.companyName }}
+              </div>
+
+              <div class="text-xs text-gray-500">
+                Invited by {{ inv.invitedByName }}
+              </div>
+            </div>
+
+            <!-- STATUS BADGE -->
+            <div *ngIf="inv.status !== 'PENDING'">
+
+              <span *ngIf="inv.status === 'ACCEPTED'"
+                    class="px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">
+                Accepted
+              </span>
+
+              <span *ngIf="inv.status === 'REJECTED'"
+                    class="px-2 py-1 text-xs font-semibold bg-red-100 text-red-700 rounded-full">
+                Rejected
+              </span>
+
+            </div>
+
+          </div>
+
+          <!-- PENDING ACTIONS -->
+          <div class="flex gap-2 mt-2" *ngIf="inv.status === 'PENDING'">
+
+            <button (click)="accept(inv.id)" class="px-2 py-1 bg-green-600 text-white text-xs rounded">
+              Accept
+            </button>
+
+            <button (click)="reject(inv.id)" class="px-2 py-1 bg-red-500 text-white text-xs rounded">
+              Reject
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- AUTH -->
+    <ng-container *ngIf="currentUser$ | async as user; else guest">
+      <div class="flex items-center gap-3 shrink-0">
+        <button
+
+          *ngIf="authService.isCompanyMember() && company"
+
+          (click)="goCompanyDashboard()"
+
+          class="flex items-center gap-2 px-4 py-2 text-sm rounded-md border hover:bg-gray-50 whitespace-nowrap"
+
+        >
+
+          <img
+
+            [src]="sharedService.getImageUrl(company.logoUrl)"
+
+            [alt]="company.name"
+
+            class="w-5 h-5 rounded-full object-cover shrink-0"
+
+          />
+
+          <span class="font-medium">
+
+    {{ company.name }}
+
+  </span>
+
+        </button>
+
+        <button *ngIf="isAdmin()" (click)="goAdmin()"
+                class="text-sm px-4 py-2 rounded-md bg-gray-900 text-white hover:bg-black">
+          Admin
+        </button>
+
+        <button (click)="logout()" class="text-sm px-4 py-2 rounded-md border hover:bg-gray-50">
+          Logout
+        </button>
+
+
+
+      </div>
+    </ng-container>
+
+    <!-- INVITATIONS / NOTIFICATIONS -->
+
+    <ng-template #guest>
+      <div class="flex items-center gap-3 shrink-0">
+        <a routerLink="/login" class="text-sm text-gray-600 hover:text-black">
+          Login
+        </a>
+
+        <a routerLink="/register" class="text-sm px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">
+          Sign up
+        </a>
+      </div>
+    </ng-template>
+
+  </div>
+</header>
+
+<div class="bg-slate-50 border-b">
+  <div class="max-w-6xl mx-auto px-4 py-4">
+
+    <nav class="flex justify-center items-center gap-3 flex-wrap">
+
+      <a routerLink="/" (click)="clearSelection()" class="px-4 py-2 rounded-full text-base border transition"
+         [class.bg-black]="selectedCategoryId === null" [class.text-white]="selectedCategoryId === null">
+        All
+      </a>
+
+      <a *ngFor="let category of categories" routerLink="/" [queryParams]="{ category: category.name }"
+         (click)="toggleCategory(category.id)"
+         class="px-4 py-2 rounded-full text-base border hover:bg-gray-100 transition"
+         [class.bg-black]="selectedCategoryId === category.id" [class.text-white]="selectedCategoryId === category.id">
+        {{ category.name }}
+      </a>
+
+    </nav>
+
+
+    <div *ngIf="selectedCategoryId !== null && activeCategory() as category" class="mt-4 flex justify-center">
+
+      <div class="flex flex-wrap justify-center gap-3 max-w-3xl">
+
+        <a *ngFor="let sub of category.subcategories || []" routerLink="/"
+           [queryParams]="{ category: category.name, subcategory: sub.name }" class="px-4 py-2 rounded-full text-base font-medium border border-gray-200
+             text-gray-700 bg-white
+             hover:bg-gray-900 hover:text-white hover:border-gray-900
+             transition shadow-sm">
+
+          {{ sub.name }}
+
+        </a>
+
+        <span *ngIf="!category.subcategories.length" class="text-sm text-gray-400 px-2 py-2">
+          No subcategories
+        </span>
+
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,108 @@
+<div class="space-y-8 mt-2">
+
+  <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+    <article
+      *ngFor="let product of filteredProducts"
+      class="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+    >
+      <div class="relative aspect-[4/3] overflow-hidden bg-slate-100">
+        <img
+          [src]="this.sharedService.getImageUrl(product.imageUrl)"
+          [alt]="product.name"
+          class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/45 via-black/0 to-transparent"></div>
+        <div class="absolute left-4 top-4 inline-flex items-center rounded-full bg-white/90 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-700">
+          {{ product.category || 'Other' }}
+        </div>
+      </div>
+
+<div class="flex flex-1 flex-col p-5">
+
+  <div class="flex items-start justify-between gap-4">
+
+    <!-- LEFT -->
+    <div>
+      <h2 class="text-xl font-semibold text-slate-900">
+        {{ product.name }}
+      </h2>
+
+      <p class="mt-1 text-sm font-medium text-slate-500 flex items-center gap-2">
+
+        <img
+          [src]="sharedService.getImageUrl(product.companyLogoUrl)"
+          alt="Company logo"
+          class="h-8 w-8 rounded-full object-cover border"
+        />
+
+        <span
+          class="leading-none cursor-pointer hover:underline flex items-center gap-1"
+          [routerLink]="['/company', product.companyId]"
+        >
+          {{ product.companyName }}
+
+          <!-- VERIFIED BADGE -->
+          <svg
+            *ngIf="product.companyIsVerified"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            class="h-4 w-4 shrink-0 text-sky-500"
+            fill="currentColor"
+            title="Verified Company"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path
+              d="M10 12.5 8.5 11 7 12.5 10 15.5 17 8.5 15.5 7z"
+              fill="white"
+            />
+          </svg>
+
+        </span>
+
+      </p>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="flex items-center gap-3">
+          <span class="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+            #{{ product.id }}
+          </span>
+        </div>
+      </div>
+
+      <p class="mt-4 text-sm leading-6 text-slate-600 line-clamp-3">
+        {{ product.description }}
+      </p>
+
+      <div class="mt-5 flex items-center justify-between gap-3 text-sm text-slate-500">
+        <span>
+          Added {{ product.createdAt | date:'mediumDate' }}
+        </span>
+
+        <span class="rounded-full bg-sky-50 px-3 py-1 font-medium text-sky-700">
+          Company {{ product.companyId }}
+        </span>
+      </div>
+
+
+
+      <!-- BUTTON (FORCED BOTTOM) -->
+      <div class="mt-auto pt-6">
+        <a
+          [href]="'/product/' + product.id"
+          class="inline-flex w-full items-center justify-center rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
+        >
+          View details
+        </a>
+      </div>
+      
+    </div>
+
+
+    </article>
+  </div>
+
+  <div *ngIf="filteredProducts.length === 0" class="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">
+    No products found in {{ selectedSubcategory !== 'All' ? selectedSubcategory : selectedCategory }}.
+  </div>
+</div>

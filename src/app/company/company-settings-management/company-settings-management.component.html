@@ -1,0 +1,104 @@
+<div class="space-y-6">
+
+  <!-- HEADER -->
+  <div class="rounded-3xl bg-white p-6 shadow-sm">
+    <h2 class="text-2xl font-bold">Company Settings</h2>
+    <p class="text-sm text-gray-500 mt-1">
+      Manage your company profile and configuration
+    </p>
+  </div>
+
+  <!-- FORM -->
+  <div class="rounded-3xl bg-white p-6 shadow-sm space-y-5">
+
+    <!-- NAME -->
+    <div>
+      <label class="text-sm font-medium text-gray-600">Company Name</label>
+      <input
+        [(ngModel)]="company.name"
+        class="mt-1 w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 focus:border-sky-500 outline-none"
+      />
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div>
+      <label class="text-sm font-medium text-gray-600">Description</label>
+      <textarea
+        rows="4"
+        [(ngModel)]="company.description"
+        class="mt-1 w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 focus:border-sky-500 outline-none"
+      ></textarea>
+    </div>
+
+    <!-- EMAIL + PHONE -->
+    <div class="grid md:grid-cols-2 gap-4">
+
+      <div>
+        <label class="text-sm font-medium text-gray-600">Email</label>
+        <input
+          [(ngModel)]="company.email"
+          class="mt-1 w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3"
+        />
+      </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-600">Phone</label>
+        <input
+          [(ngModel)]="company.phone"
+          class="mt-1 w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3"
+        />
+      </div>
+
+    </div>
+
+    <!-- ADDRESS + WEBSITE -->
+    <div class="grid md:grid-cols-2 gap-4">
+
+      <div>
+        <label class="text-sm font-medium text-gray-600">Address</label>
+        <input
+          [(ngModel)]="company.address"
+          class="mt-1 w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3"
+        />
+      </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-600">Website</label>
+        <input
+          [(ngModel)]="company.website"
+          class="mt-1 w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3"
+        />
+      </div>
+
+    </div>
+
+    <!-- VERIFIED TOGGLE -->
+    <div class="flex items-center justify-between bg-gray-50 p-4 rounded-xl border">
+
+      <div>
+        <p class="font-medium">Verified Company</p>
+        <p class="text-xs text-gray-500">Mark company as verified badge</p>
+      </div>
+
+      <input
+        type="checkbox"
+        [(ngModel)]="company.verified"
+        class="w-5 h-5 accent-sky-600"
+      />
+
+    </div>
+
+    <!-- SAVE BUTTON -->
+    <div class="flex justify-end">
+      <button
+        (click)="saveSettings()"
+        [disabled]="saving"
+        class="rounded-xl bg-sky-600 px-6 py-3 text-white font-medium hover:bg-sky-700 disabled:opacity-50"
+      >
+        {{ saving ? 'Saving...' : 'Save Settings' }}
+      </button>
+    </div>
+
+  </div>
+
+</div>

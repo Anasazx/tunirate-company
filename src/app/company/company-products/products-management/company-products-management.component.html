@@ -1,0 +1,88 @@
+<div class="space-y-6">
+
+  <!-- HEADER -->
+  <div class="flex items-center justify-between">
+
+    <div>
+      <h1 class="text-3xl font-bold">Products</h1>
+      <p class="text-slate-500">Manage your company products</p>
+    </div>
+
+    <button
+      (click)="addProduct()"
+      class="rounded-xl bg-sky-600 px-5 py-2 text-white font-medium hover:bg-sky-700"
+    >
+      + Add Product
+    </button>
+
+  </div>
+
+  <!-- TABLE -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+
+    <table class="w-full text-sm">
+
+      <thead class="bg-slate-50 text-slate-600">
+        <tr>
+          <th class="text-left p-4">Product</th>
+          <th class="text-left p-4">Category</th>
+          <th class="text-left p-4">Created</th>
+          <th class="text-right p-4">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr
+          *ngFor="let p of products"
+          class="border-t hover:bg-slate-50 transition"
+        >
+
+          <!-- PRODUCT -->
+          <td class="p-4 font-medium flex items-center gap-3">
+
+            <img
+              *ngIf="p.imageUrl"
+              [src]="sharedService.getImageUrl(p.imageUrl)"
+              alt="Product Image"
+              class="w-10 h-10 rounded-lg object-cover border"
+            />
+
+            <span>
+              {{ p.name }}
+            </span>
+
+          </td>
+
+          <!-- CATEGORY -->
+          <td class="p-4 text-slate-600">
+            {{ p.categoryName || p.category }}
+          </td>
+
+
+          <!-- CREATED -->
+          <td class="p-4 text-slate-500">
+            {{ p.createdAt | date:'mediumDate' }}
+          </td>
+
+          <!-- ACTIONS -->
+          <td class="p-4 text-right">
+
+            <button
+              (click)="editProduct(p.id)"
+              class="text-sky-600 hover:underline font-medium"
+            >
+              Edit
+            </button>
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

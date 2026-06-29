@@ -1,0 +1,207 @@
+<div class="space-y-6">
+
+  <!-- HEADER -->
+  <div>
+    <h1 class="text-3xl font-bold">Company Reviews</h1>
+    <p class="text-slate-500">Manage and analyze customer feedback</p>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="flex flex-wrap gap-2">
+
+    <button (click)="setFilter(null)"
+      class="rounded-xl px-4 py-2 text-sm border"
+      [ngClass]="!selectedRating ? 'bg-sky-600 text-white' : 'bg-white'">
+      All
+    </button>
+
+    <button *ngFor="let r of [5,4,3,2,1]"
+      (click)="setFilter(r)"
+      class="rounded-xl px-4 py-2 text-sm border"
+      [ngClass]="selectedRating === r ? 'bg-sky-600 text-white' : 'bg-white'">
+      {{ r }} ★
+    </button>
+
+  </div>
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="text-slate-500">
+    Loading reviews...
+  </div>
+
+  <!-- REVIEWS -->
+  <div class="space-y-4" *ngIf="!loading">
+
+    <div *ngFor="let r of filteredReviews"
+      class="rounded-2xl bg-white p-5 shadow-sm border border-slate-100">
+
+      <!-- HEADER -->
+      <div class="flex justify-between items-start">
+
+        <div>
+          <p class="font-semibold">{{ r.userName }}</p>
+          <p class="text-xs text-slate-400">
+            {{ r.createdAt | date:'mediumDate' }}
+          </p>
+        </div>
+
+        <div class="font-medium"
+          [ngClass]="{
+            'text-green-600': r.rating >= 4,
+            'text-yellow-500': r.rating === 3,
+            'text-red-500': r.rating <= 2
+          }">
+          {{ r.rating }} ★
+        </div>
+
+      </div>
+
+      <!-- REVIEW CONTENT -->
+      <p class="mt-3 text-slate-700">
+        {{ r.content }}
+      </p>
+
+      <!-- PREVIEW COMMENT -->
+      <div *ngIf="r.previewComment && !expandedReviewIds.has(r.id)"
+        class="mt-4 rounded-xl bg-slate-50 p-3 border">
+
+        <div class="flex justify-between">
+          <span class="font-medium text-sky-700">
+            {{ r.previewComment.actorName }}
+          </span>
+
+          <span class="text-xs text-slate-400">
+            {{ r.previewComment.createdAt | date:'short' }}
+          </span>
+        </div>
+
+        <p class="mt-2 text-sm text-slate-600">
+          {{ r.previewComment.content }}
+        </p>
+
+      </div>
+
+      <!-- STATS -->
+      <div class="mt-4 flex gap-4 text-sm text-slate-500 items-center">
+
+        <span
+          class="cursor-pointer text-sky-600 hover:underline"
+          (click)="toggleComments(r.id)">
+          {{
+            expandedReviewIds.has(r.id)
+              ? 'Hide replies'
+              : ('View ' + r.commentsCount + ' replies')
+          }}
+        </span>
+
+        <span *ngIf="r.previewComment" class="text-green-600 font-medium">
+          Replied
+        </span>
+
+        <span *ngIf="!r.previewComment" class="text-red-500 font-medium">
+          Awaiting reply
+        </span>
+
+      </div>
+
+      <!-- COMMENTS -->
+      <div *ngIf="expandedReviewIds.has(r.id)" class="mt-4 space-y-3">
+
+        <!-- ADD COMMENT -->
+        <div class="flex gap-2">
+          <input
+            [(ngModel)]="r.newComment"
+            placeholder="Write a comment..."
+            class="flex-1 rounded-lg border px-3 py-2 text-sm"
+          />
+
+          <button
+            (click)="addComment(r)"
+            class="bg-sky-600 text-white px-4 py-2 rounded-lg text-sm">
+            Send
+          </button>
+        </div>
+
+        <!-- LOADING -->
+        <div *ngIf="loadingComments[r.id]" class="text-sm text-slate-400">
+          Loading comments...
+        </div>
+
+        <!-- COMMENTS LIST -->
+        <div *ngFor="let c of (commentsMap[r.id] || [])"
+          class="rounded-xl p-3 border bg-slate-50">
+
+          <!-- HEADER -->
+          <div class="flex justify-between items-start">
+
+            <div class="text-sm font-medium">
+
+              <span class="text-sky-700">
+                {{ c.actorName }}
+              </span>
+
+              <span *ngIf="c.repliedToActorName"
+                class="text-slate-500 font-normal">
+                → {{ c.repliedToActorName }}
+              </span>
+
+            </div>
+
+            <div class="text-xs text-slate-400">
+              {{ c.createdAt | date:'short' }}
+            </div>
+
+          </div>
+
+          <!-- CONTENT -->
+          <div class="mt-1 text-sm text-slate-700">
+            {{ c.content }}
+          </div>
+
+          <!-- REPLY BUTTON -->
+          <button
+            (click)="startReply(c)"
+            class="mt-2 text-xs text-sky-600 hover:underline">
+            Reply
+          </button>
+
+          <!-- INLINE REPLY -->
+          <div *ngIf="replyingToCommentId === c.id"
+               class="mt-2 flex gap-2">
+
+            <input
+              [(ngModel)]="replyText"
+              placeholder="Reply to {{ c.actorName }}"
+              class="flex-1 rounded-lg border px-3 py-2 text-sm"
+            />
+
+            <button
+              (click)="sendReply(c)"
+              class="bg-sky-600 text-white px-3 py-2 rounded-lg text-sm">
+              Send
+            </button>
+
+            <button
+              (click)="cancelReply()"
+              class="bg-gray-200 px-3 py-2 rounded-lg text-sm">
+              Cancel
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- EMPTY -->
+        <div
+          *ngIf="commentsMap[r.id]?.length === 0"
+          class="text-sm text-slate-400">
+          No comments yet
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
