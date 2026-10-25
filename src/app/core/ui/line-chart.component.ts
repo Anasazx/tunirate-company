@@ -13,7 +13,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
   labels = input.required<string[]>();
   values = input.required<number[]>();
   label = input('');
-  color = input('#0284c7');
+  color = input('#087f5b');
 
   private canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
   private chart?: Chart<'line'>;

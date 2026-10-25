@@ -15,7 +15,7 @@
     @for (s of [5, 4, 3, 2, 1]; track s) {
       <button type="button" class="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium transition"
               [class]="rating() === s ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" (click)="setFilters({ rating: s })">
-        {{ s }}<lucide-icon [img]="icons.Star" [size]="11" [class]="rating() === s ? 'fill-white' : 'fill-amber-400 text-amber-400'" />
+        {{ s }}<lucide-icon [img]="icons.Star" [size]="11" [class]="rating() === s ? 'fill-white' : 'fill-rating text-rating'" />
       </button>
     }
   </div>
@@ -53,7 +53,7 @@
               <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span class="font-medium text-slate-900">{{ r.user?.name || 'A customer' }}</span>
                 <span class="flex items-center gap-0.5" [attr.aria-label]="r.rating + ' out of 5 stars'">
-                  @for (s of stars; track s) { <lucide-icon [img]="icons.Star" [size]="14" [class]="s <= r.rating ? 'fill-amber-400 text-amber-400' : 'text-slate-200'" /> }
+                  @for (s of stars; track s) { <lucide-icon [img]="icons.Star" [size]="14" [class]="s <= r.rating ? 'fill-rating text-rating' : 'text-slate-200'" /> }
                 </span>
                 <span class="text-xs text-slate-400">{{ timeAgo(r.createdAt) }}</span>
               </div>
