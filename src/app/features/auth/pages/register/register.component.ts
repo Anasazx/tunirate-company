@@ -2,7 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../../core/services/authService/auth.service';
+import { AuthService } from '../../services/authService/auth.service';
 
 @Component({
   selector: 'app-register',

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../services/authService/auth.service';
-import { CompanyService } from '../../services/companyService/company.service';
+import { AuthService } from '../../../features/auth/services/authService/auth.service';
+import { CompanyService } from '../../../features/settings/services/companyService/company.service';
 import { SharedService } from '../../services/sharedService/shared.service';
 
 

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../../core/services/authService/auth.service';
+import { AuthService } from '../../services/authService/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -25,8 +25,13 @@ export class LoginComponent {
     }
     this.loading = true;
     this.auth.login({ email, password }).subscribe({
-      next: () => {
+      next: (res) => {
         this.loading = false;
+        if (!res.companyId) {
+          this.auth.logout();
+          this.error = 'This account does not belong to any company.';
+          return;
+        }
         this.router.navigate(['/']);
       },
       error: (err) => {

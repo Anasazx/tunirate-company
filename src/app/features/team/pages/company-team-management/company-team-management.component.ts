@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CompanyMemberResponse } from '../../models/companyMemberDTO/CompanyMemberResponse.model';
 import { CompanyRole } from '../../../../core/model/enums/companyRole.enum.model';
-import { CompanyMemberService } from '../../../../core/services/companyMemberService/company-member.service';
-import { CompanyInvitationService } from '../../../../core/services/companyInvitationService/company-invitation.service';
+import { CompanyMemberService } from '../../services/companyMemberService/company-member.service';
+import { CompanyInvitationService } from '../../services/companyInvitationService/company-invitation.service';
 
 
 @Component({

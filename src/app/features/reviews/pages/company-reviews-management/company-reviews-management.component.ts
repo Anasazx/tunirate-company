@@ -4,8 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReviewResponse } from '../../models/reviewDTO/reviewResponse.model';
 import { CommentResponse } from '../../models/commentDTO/commentResponse.model';
-import { ReviewService } from '../../../../core/services/reviewService/review.service';
-import { CommentService } from '../../../../core/services/commentService/comment.service';
+import { ReviewService } from '../../services/reviewService/review.service';
+import { CommentService } from '../../services/commentService/comment.service';
 
 @Component({
   selector: 'app-company-reviews',

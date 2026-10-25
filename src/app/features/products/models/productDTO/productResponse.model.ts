@@ -4,19 +4,15 @@ export interface ProductResponse {
   id: number;
   name: string;
   description: string;
-  category: string;
-  categoryName?: string;
-  subcategory?: string;
-  subcategoryName?: string;
+  categoryName: string;
+  subcategoryName: string;
   companyId: number;
   companyName: string;
   companyIsVerified?: boolean;
   companyLogoUrl?: string;
   imageUrl: string;
   createdAt: string;
-  createdByName?: string;
-  createdById?: number;
-  updatedByName?: string;
-  updatedById?: number;
+  createdByName: string;
+  updatedByName: string | null;
   status: ProductStatus;
 }
