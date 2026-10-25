@@ -1,0 +1,94 @@
+<div class="min-h-screen bg-slate-50">
+
+  <!-- SIDEBAR -->
+  @if (menuOpen()) {
+    <div class="fixed inset-0 z-30 bg-slate-900/40 lg:hidden" (click)="menuOpen.set(false)"></div>
+  }
+  <aside class="fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-200 bg-white transition-transform duration-200 lg:translate-x-0"
+         [class.-translate-x-full]="!menuOpen()">
+    <div class="flex h-16 items-center gap-3 border-b border-slate-100 px-4">
+      @if (context.company(); as c) {
+        @if (c.logoUrl) {
+          <img [src]="sharedService.getImageUrl(c.logoUrl)" alt="" class="h-9 w-9 shrink-0 rounded-lg border border-slate-200 object-cover" />
+        } @else {
+          <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-100 text-xs font-semibold text-brand-700">{{ initials(c.name) }}</span>
+        }
+        <span class="min-w-0 flex-1">
+          <span class="block truncate text-sm font-semibold leading-tight text-slate-900">{{ c.name }}</span>
+          <span class="block text-xs text-slate-500">ReviewHood for Business</span>
+        </span>
+      } @else {
+        <div class="skeleton h-9 w-9"></div><div class="skeleton h-4 flex-1"></div>
+      }
+      <button type="button" class="btn-ghost btn-sm lg:hidden" (click)="menuOpen.set(false)" aria-label="Close menu">
+        <lucide-icon [img]="icons.X" [size]="18" />
+      </button>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto px-3 py-4">
+      <ul class="space-y-0.5">
+        @for (item of nav(); track item.path) {
+          <li>
+            <a [routerLink]="item.path"
+               routerLinkActive="bg-brand-50 text-brand-700 [&_.nav-icon]:text-brand-600"
+               [routerLinkActiveOptions]="{ exact: !!item.exact }"
+               class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900">
+              <lucide-icon [img]="item.icon" [size]="18" class="nav-icon text-slate-400 group-hover:text-slate-600" />
+              <span class="flex-1">{{ item.label }}</span>
+              @if (item.badge && item.badge() > 0) {
+                <span class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800" [title]="item.badge() + ' reviews waiting for a reply'">{{ item.badge() }}</span>
+              }
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    @if (context.company()?.status && context.company()!.status !== 'ACTIVE') {
+      <div class="mx-3 mb-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
+        Your company is {{ context.company()!.status.toLowerCase() }}. It isn't listed publicly until ReviewHood activates it.
+      </div>
+    }
+  </aside>
+
+  <div class="lg:pl-64">
+    <!-- TOP BAR -->
+    <header class="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-6 lg:px-8">
+      <button type="button" class="btn-ghost -ml-2 lg:hidden" (click)="menuOpen.set(true)" aria-label="Open menu">
+        <lucide-icon [img]="icons.Menu" [size]="20" />
+      </button>
+      <div class="flex-1"></div>
+
+      @if (user(); as u) {
+        <div class="relative" data-user-menu>
+          <button type="button" class="flex items-center gap-3 rounded-lg px-2 py-1.5 transition hover:bg-slate-100"
+                  (click)="userMenuOpen.set(!userMenuOpen())" [attr.aria-expanded]="userMenuOpen()">
+            <span class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700">{{ initials(u.user.name) }}</span>
+            <span class="hidden text-left sm:block">
+              <span class="block text-sm font-medium leading-tight text-slate-900">{{ u.user.name }}</span>
+              <span class="block text-xs text-slate-500">{{ context.isHead() ? 'Company head' : 'Team member' }}</span>
+            </span>
+            <lucide-icon [img]="icons.ChevronDown" [size]="16" class="text-slate-400" />
+          </button>
+          @if (userMenuOpen()) {
+            <div class="absolute right-0 mt-2 w-60 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+              <div class="border-b border-slate-100 px-4 py-3">
+                <p class="truncate text-sm font-medium text-slate-900">{{ u.user.name }}</p>
+                <p class="truncate text-xs text-slate-500">{{ u.user.email }}</p>
+              </div>
+              <button type="button" class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50" (click)="logout()">
+                <lucide-icon [img]="icons.LogOut" [size]="16" class="text-slate-400" /> Sign out
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </header>
+
+    <main class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <router-outlet />
+    </main>
+  </div>
+
+  <app-overlays />
+</div>

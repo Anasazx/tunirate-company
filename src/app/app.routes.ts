@@ -1,48 +1,35 @@
 import { Routes } from '@angular/router';
-import { CompanyDashboardComponent } from './features/dashboard/pages/company-dashboard/company-dashboard.component';
-import { CompanyReviewsManagementComponent } from './features/reviews/pages/company-reviews-management/company-reviews-management.component';
-import { CompanyProductsManagementComponent } from './features/products/pages/products-management/company-products-management.component';
-import { CompanySettingsManagementComponent } from './features/settings/pages/company-settings-management/company-settings-management.component';
-import { CompanyTeamManagementComponent } from './features/team/pages/company-team-management/company-team-management.component';
-import { LoginComponent } from './features/auth/pages/login/login.component';
-import { RegisterComponent } from './features/auth/pages/register/register.component';
-import { CompanyMainComponent } from './core/layout/company-main/company-main.component';
-import {CompanyNewProductComponent} from './features/products/pages/company-new-product/company-new-product.component';
-import {EditProductComponent} from './features/products/pages/edit-product/edit-product.component';
-import {ProductDetailsComponent} from './features/products/pages/product-details/product-details.component';
-import { authGuard, guestGuard } from './core/guards/auth.guard';
+import { ShellComponent } from './core/layout/shell/shell.component';
+import { authGuard, guestGuard, headGuard } from './core/guards/auth.guard';
 
+const title = (page: string) => `${page} · ReviewHood for Business`;
+
+// Pages are lazy loaded so the first screen loads fast
 export const routes: Routes = [
-
-
   {
     path: 'auth/login',
-    component: LoginComponent,
     canActivate: [guestGuard],
-  },
-  {
-    path: 'auth/register',
-    component: RegisterComponent,
-    canActivate: [guestGuard],
+    title: title('Sign in'),
+    loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent),
   },
   {
     path: '',
-    component: CompanyMainComponent,
+    component: ShellComponent,
     canActivate: [authGuard],
     children: [
-      { path: '', component: CompanyDashboardComponent },
-      { path: 'team', component: CompanyTeamManagementComponent },
-      { path: 'reviews', component: CompanyReviewsManagementComponent },
-      { path: 'products', component: CompanyProductsManagementComponent },
-      { path: 'products/new', component: CompanyNewProductComponent },
-      { path: 'products/edit/:id', component: EditProductComponent },
-      { path: 'products/:id', component: ProductDetailsComponent },
-      { path: 'settings', component: CompanySettingsManagementComponent },
+      { path: '', title: title('Dashboard'), loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent) },
+      { path: 'products', title: title('Products'), loadComponent: () => import('./features/products/products-list.component').then(m => m.ProductsListComponent) },
+      { path: 'products/new', title: title('New product'), loadComponent: () => import('./features/products/product-form.component').then(m => m.ProductFormComponent) },
+      { path: 'products/:id/edit', title: title('Edit product'), loadComponent: () => import('./features/products/product-form.component').then(m => m.ProductFormComponent) },
+      { path: 'products/:id', title: title('Product'), loadComponent: () => import('./features/products/product-details.component').then(m => m.ProductDetailsComponent) },
+      { path: 'reviews', title: title('Reviews'), loadComponent: () => import('./features/reviews/reviews.component').then(m => m.ReviewsComponent) },
+      { path: 'team', canActivate: [headGuard], title: title('Team'), loadComponent: () => import('./features/team/team.component').then(m => m.TeamComponent) },
+      { path: 'profile', canActivate: [headGuard], title: title('Company profile'), loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent) },
+
+      // Old URLs, kept so existing links still work
+      { path: 'products/edit/:id', redirectTo: 'products/:id/edit' },
+      { path: 'settings', redirectTo: 'profile' },
     ],
   },
-  {
-     path: '**',
-     redirectTo: '/'
-  },
-
+  { path: '**', redirectTo: '' },
 ];

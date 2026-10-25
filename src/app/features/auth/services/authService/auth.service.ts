@@ -1,43 +1,26 @@
 import { Injectable } from '@angular/core';
-import { SharedService } from '../../../../core/services/sharedService/shared.service';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { AuthResponse } from '../../models/authDTO/authResponse.model';
-import { LoginRequest } from '../../models/authDTO/loginRequest.model';
-import { RegisterRequest } from '../../models/authDTO/registerRequest.model';
-
-
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { SharedService } from '../../../../core/services/sharedService/shared.service';
+import { AuthResponse } from '../../../../core/api/models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  authUrl : String = "";
+  private authUrl: string;
   private tokenKey = 'auth_user';
   private currentUserSubject = new BehaviorSubject<AuthResponse | null>(this.loadFromStorage());
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private sharedService: SharedService, private http: HttpClient) {
-    this.authUrl = this.sharedService.publicUrl + "/auth";
+    this.authUrl = this.sharedService.publicUrl + '/auth';
   }
 
-  // Request/response DTOs
-  login(request: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.authUrl.toString()}/login`, request).pipe(
-      tap((res) => {
-        this.saveToStorage(res);
-        this.currentUserSubject.next(res);
-      })
-    );
-  }
-
-  register(request: RegisterRequest): Observable<AuthResponse> {
-    console.log(request);
-
-    return this.http.post<AuthResponse>(`${this.authUrl.toString()}/register`, request).pipe(
-      tap((res) => {
+  login(request: { email: string; password: string }): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.authUrl}/login`, request).pipe(
+      tap(res => {
         this.saveToStorage(res);
         this.currentUserSubject.next(res);
       })
@@ -53,21 +36,8 @@ export class AuthService {
     return this.currentUserSubject.value?.token ?? null;
   }
 
-  getCompanyId(): number | null {
-    return this.currentUserSubject.value?.companyId ?? null;
-  }
-
-  getCompanyRole(): "HEAD" | "WORKER" | null {
-    return this.currentUserSubject.value?.companyRole ?? null;
-  }
-
   isAuthenticated(): boolean {
     return !!this.currentUserSubject.value?.token;
-  }
-
-  isAdmin(): boolean {
-    const role = this.currentUserSubject.value?.role;
-    return !!role && role.toLowerCase() === 'admin';
   }
 
   isCompanyMember(): boolean {
@@ -95,5 +65,3 @@ export class AuthService {
   }
 
 }
-
-

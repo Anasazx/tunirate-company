@@ -1,0 +1,82 @@
+<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <h1 class="text-2xl font-semibold text-slate-900">Products</h1>
+    <p class="mt-1 text-sm text-slate-500">Add products, keep them up to date and follow their review.</p>
+  </div>
+  <a routerLink="/products/new" class="btn-primary self-start sm:self-auto"><lucide-icon [img]="icons.Plus" [size]="16" /> New product</a>
+</div>
+
+<div class="card">
+  <div class="overflow-x-auto border-b border-slate-200 px-4">
+    <nav class="flex gap-6 pt-3" aria-label="Filter by status">
+      @for (tab of tabs; track tab.label) {
+        <button type="button" class="tab" [class.tab-active]="status() === tab.value" (click)="setFilters({ status: tab.value })">
+          {{ tab.label }}
+          <span class="tab-count" [class.!bg-red-100]="tab.value === 'REJECTED' && (counts()['REJECTED'] ?? 0) > 0"
+                [class.!text-red-700]="tab.value === 'REJECTED' && (counts()['REJECTED'] ?? 0) > 0">
+            {{ tab.value ? (counts()[tab.value] ?? 0) : totalCount() }}
+          </span>
+        </button>
+      }
+    </nav>
+  </div>
+
+  <div class="border-b border-slate-100 p-4">
+    <div class="md:w-80"><app-search-input placeholder="Search your products" [value]="q()" (search)="setFilters({ q: $event })" /></div>
+  </div>
+
+  @if (error()) {
+    <div class="m-4 flex items-center justify-between rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+      {{ error() }} <button type="button" class="btn-secondary btn-sm" (click)="load()">Retry</button>
+    </div>
+  }
+
+  <div class="overflow-x-auto">
+    @if (loading() && !products().content.length) {
+      <div class="space-y-3 p-4">
+        @for (i of [1, 2, 3, 4, 5]; track i) { <div class="flex items-center gap-3"><div class="skeleton h-10 w-10"></div><div class="skeleton h-4 flex-1"></div><div class="skeleton h-4 w-20"></div></div> }
+      </div>
+    } @else if (!products().content.length) {
+      <app-empty-state [title]="q() || status() ? 'No products match' : 'No products yet'"
+                       [message]="q() || status() ? 'Try another search or status.' : 'Add your first product so customers can find and review it.'"
+                       [icon]="icons.Package">
+        @if (!q() && !status()) { <a routerLink="/products/new" class="btn-primary btn-sm">Add a product</a> }
+      </app-empty-state>
+    } @else {
+      <table class="table-base min-w-[640px]" [class.opacity-60]="loading()">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Status</th>
+            <th>Added</th>
+            <th class="text-right"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of products().content; track p.id) {
+            <tr class="row-link" [routerLink]="['/products', p.id]">
+              <td>
+                <div class="flex items-center gap-3">
+                  <img [src]="sharedService.getImageUrl(p.image?.url)" alt="" loading="lazy" class="h-10 w-10 shrink-0 rounded-lg border border-slate-200 bg-slate-50 object-cover" />
+                  <div class="min-w-0">
+                    <p class="max-w-md truncate font-medium text-slate-900">{{ p.name }}</p>
+                    <p class="truncate text-xs text-slate-500">{{ p.subcategoryName ? p.categoryName + ' › ' + p.subcategoryName : 'No category' }}</p>
+                  </div>
+                </div>
+              </td>
+              <td><app-badge [value]="p.status" [label]="statusLabels[p.status]" /></td>
+              <td class="whitespace-nowrap text-slate-500">{{ p.createdAt | date: 'mediumDate' }}</td>
+              <td (click)="$event.stopPropagation()" class="cursor-default text-right">
+                @if (p.status !== 'ARCHIVED') {
+                  <a [routerLink]="['/products', p.id, 'edit']" class="btn-ghost btn-sm" aria-label="Edit"><lucide-icon [img]="icons.Pencil" [size]="14" /> Edit</a>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  <app-pagination [page]="products().number" [size]="size" [total]="products().totalElements" (pageChange)="setFilters({ page: $event })" />
+</div>

@@ -1,0 +1,113 @@
+<button type="button" (click)="cancel()" class="mb-4 inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800">
+  <lucide-icon [img]="icons.ArrowLeft" [size]="16" /> {{ isEdit() ? 'Back to product' : 'Products' }}
+</button>
+
+<h1 class="mb-1 text-2xl font-semibold text-slate-900">{{ isEdit() ? 'Edit product' : 'New product' }}</h1>
+<p class="mb-6 text-sm text-slate-500">Products go live after ReviewHood approves them, usually within a few days.</p>
+
+@if (currentStatus() === 'PUBLISHED') {
+  <div class="mb-6 flex gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+    <lucide-icon [img]="icons.TriangleAlert" [size]="18" class="mt-0.5 shrink-0" />
+    This product is live. Saving changes to its details sends it back for review, and it is hidden until it's approved. Images update right away.
+  </div>
+}
+
+@if (loading()) {
+  <div class="card space-y-4 p-6"><div class="skeleton h-9 w-full"></div><div class="skeleton h-24 w-full"></div></div>
+} @else {
+  <div class="grid gap-6 lg:grid-cols-3">
+    <div class="space-y-6 lg:col-span-2">
+      <section class="card space-y-5 p-6">
+        <div>
+          <label class="label" for="name">Name <span class="text-red-500">*</span></label>
+          <input id="name" class="input" [(ngModel)]="name" maxlength="200" [class.!border-red-400]="submitted() && !name.trim()" placeholder="e.g. Hydrating face cream 50ml" />
+        </div>
+        <div>
+          <label class="label" for="description">Description</label>
+          <textarea id="description" rows="7" class="input" [(ngModel)]="description" placeholder="What is it, who is it for, what makes it different?"></textarea>
+          <p class="hint">A clear description helps customers write useful reviews.</p>
+        </div>
+      </section>
+
+      <section class="card p-6">
+        <div class="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <h2 class="text-sm font-semibold text-slate-900">Images</h2>
+            <p class="text-xs text-slate-500">The main image is shown in search results. JPEG, PNG, WEBP, GIF or AVIF, up to 10 MB.</p>
+          </div>
+          <label class="btn-secondary btn-sm shrink-0 cursor-pointer" [class.pointer-events-none]="imageBusy()" [class.opacity-50]="imageBusy()">
+            @if (imageBusy()) { <lucide-icon [img]="icons.LoaderCircle" [size]="14" class="animate-spin" /> } @else { <lucide-icon [img]="icons.ImagePlus" [size]="14" /> }
+            Add images
+            <input type="file" class="sr-only" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" multiple (change)="onFilesSelected($event)" />
+          </label>
+        </div>
+
+        @if (!images().length && !queued().length) {
+          <label class="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 px-6 py-10 text-center transition hover:border-brand-300 hover:bg-brand-50/40">
+            <lucide-icon [img]="icons.ImagePlus" [size]="24" class="text-slate-400" />
+            <span class="mt-2 text-sm font-medium text-slate-700">Click to add images</span>
+            <span class="text-xs text-slate-500">Products with photos get more reviews</span>
+            <input type="file" class="sr-only" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" multiple (change)="onFilesSelected($event)" />
+          </label>
+        } @else {
+          <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            @for (img of images(); track img.id) {
+              <div class="group relative overflow-hidden rounded-xl border" [class]="img.isMain ? 'border-brand-500 ring-2 ring-brand-500/30' : 'border-slate-200'">
+                <img [src]="sharedService.getImageUrl(img.url)" alt="" class="aspect-square w-full bg-slate-50 object-cover" />
+                @if (img.isMain) {
+                  <span class="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-brand-600 px-2 py-0.5 text-[11px] font-medium text-white"><lucide-icon [img]="icons.Star" [size]="10" class="fill-white" /> Main</span>
+                }
+                <div class="absolute inset-x-0 bottom-0 flex justify-end gap-1 bg-gradient-to-t from-slate-900/60 to-transparent p-2 opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100">
+                  @if (!img.isMain) {
+                    <button type="button" class="rounded-md bg-white/90 px-2 py-1 text-[11px] font-medium text-slate-800 hover:bg-white" [disabled]="imageBusy()" (click)="setMain(img)">Set as main</button>
+                  }
+                  <button type="button" class="rounded-md bg-white/90 p-1 text-red-600 hover:bg-white" [disabled]="imageBusy()" (click)="deleteImage(img)" aria-label="Delete image"><lucide-icon [img]="icons.Trash2" [size]="14" /></button>
+                </div>
+              </div>
+            }
+            @for (img of queued(); track img.preview; let i = $index) {
+              <div class="relative overflow-hidden rounded-xl border border-dashed" [class]="i === 0 && !images().length ? 'border-brand-500 ring-2 ring-brand-500/30' : 'border-brand-300'">
+                <img [src]="img.preview" alt="" class="aspect-square w-full object-cover" />
+                @if (i === 0) { <span class="absolute left-2 top-2 rounded-full bg-brand-600 px-2 py-0.5 text-[11px] font-medium text-white">Main</span> }
+                <button type="button" class="absolute right-2 top-2 rounded-md bg-white/90 p-1 text-slate-600 hover:text-red-600" (click)="removeQueued(i)" aria-label="Remove"><lucide-icon [img]="icons.X" [size]="14" /></button>
+              </div>
+            }
+          </div>
+          @if (queued().length) { <p class="mt-3 text-xs text-slate-500">Images upload when you save. The first one becomes the main image.</p> }
+        }
+      </section>
+    </div>
+
+    <div class="space-y-6">
+      <section class="card space-y-3 p-6">
+        <label class="label mb-0" for="subcategory">Category</label>
+        <select id="subcategory" class="input" [(ngModel)]="subcategoryId" [class.!border-red-400]="submitted() && !subcategoryId && error()">
+          <option [ngValue]="null">Choose a category</option>
+          @for (g of subcategoryGroups(); track g.category) {
+            <optgroup [label]="g.category">
+              @for (s of g.items; track s.id) { <option [ngValue]="s.id">{{ s.name }}</option> }
+            </optgroup>
+          }
+        </select>
+        <p class="hint">Where customers will find your product when browsing.</p>
+      </section>
+
+      @if (error()) {
+        <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">{{ error() }}</div>
+      }
+
+      <div class="space-y-2">
+        <button type="button" class="btn-primary w-full" [disabled]="saving() || imageBusy()" (click)="save('PENDING_REVIEW')">
+          @if (saving()) { <lucide-icon [img]="icons.LoaderCircle" [size]="16" class="animate-spin" /> }
+          {{ primaryLabel() }}
+        </button>
+        <div class="flex gap-2">
+          @if (canSaveDraft()) {
+            <button type="button" class="btn-secondary flex-1" [disabled]="saving() || imageBusy()" (click)="save('DRAFT')">Save as draft</button>
+          }
+          <button type="button" class="btn-ghost flex-1" (click)="cancel()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,85 @@
+<div class="mb-6">
+  <h1 class="text-2xl font-semibold text-slate-900">Team</h1>
+  <p class="mt-1 text-sm text-slate-500">People who can manage your products and answer reviews.</p>
+</div>
+
+<div class="grid items-start gap-6 lg:grid-cols-3">
+  <section class="card lg:col-span-2">
+    <div class="border-b border-slate-100 px-5 py-4">
+      <h2 class="text-sm font-semibold text-slate-900">Members <span class="ml-1 font-normal text-slate-400">{{ members().length }}</span></h2>
+      <p class="text-xs text-slate-500">Members manage products and reviews. Heads can also manage the team and the company profile.</p>
+    </div>
+
+    @if (loading()) {
+      <div class="space-y-3 p-5">@for (i of [1, 2, 3]; track i) { <div class="skeleton h-10 w-full"></div> }</div>
+    } @else if (!members().length) {
+      <app-empty-state title="No members" [icon]="icons.Users" />
+    } @else {
+      <ul class="divide-y divide-slate-100">
+        @for (m of members(); track m.user.id) {
+          <li class="flex flex-wrap items-center gap-3 px-5 py-3">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+                  [class]="m.companyRole === 'HEAD' ? 'bg-brand-100 text-brand-700' : 'bg-slate-100 text-slate-600'">{{ initials(m.user.name) }}</span>
+            <div class="min-w-0 flex-1">
+              <p class="flex items-center gap-2 truncate text-sm font-medium text-slate-900">
+                {{ m.user.name }}
+                @if (m.user.id === meId()) { <span class="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-slate-500">You</span> }
+              </p>
+              <p class="truncate text-xs text-slate-500">{{ m.user.email }} · joined {{ m.joinedAt | date: 'mediumDate' }}</p>
+            </div>
+            @if (m.user.id === meId()) {
+              <app-badge [value]="m.companyRole" [label]="roleLabels[m.companyRole]" />
+            } @else {
+              <select class="input w-auto py-1 text-xs" [ngModel]="m.companyRole" (ngModelChange)="changeRole(m, $event)" [disabled]="busyId() === m.user.id" aria-label="Role">
+                @for (r of roles; track r) { <option [ngValue]="r">{{ roleLabels[r] }}</option> }
+              </select>
+              <button type="button" class="btn-ghost btn-sm text-slate-400 hover:bg-red-50 hover:text-red-600" [disabled]="busyId() === m.user.id" (click)="remove(m)" aria-label="Remove member">
+                <lucide-icon [img]="icons.Trash2" [size]="14" />
+              </button>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </section>
+
+  <div class="space-y-6">
+    <section class="card p-5">
+      <h2 class="flex items-center gap-2 text-sm font-semibold text-slate-900"><lucide-icon [img]="icons.UserPlus" [size]="16" class="text-slate-400" /> Invite someone</h2>
+      <p class="mt-1 text-xs text-slate-500">They need a ReviewHood account. They accept the invitation from their account.</p>
+      <form class="mt-4 space-y-3" (ngSubmit)="invite()">
+        <div>
+          <label class="label" for="invite-email">Email</label>
+          <input id="invite-email" name="email" type="email" class="input" [(ngModel)]="inviteEmail" placeholder="colleague@company.com" [class.!border-red-400]="inviteError()" />
+          @if (inviteError()) { <p class="mt-1 text-xs text-red-600">{{ inviteError() }}</p> }
+        </div>
+        <button type="submit" class="btn-primary w-full" [disabled]="inviting() || !inviteEmail.trim()">
+          <lucide-icon [img]="inviting() ? icons.LoaderCircle : icons.Send" [size]="16" [class.animate-spin]="inviting()" /> Send invitation
+        </button>
+        <p class="hint">New people join as members. You can make them heads afterwards.</p>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="border-b border-slate-100 px-5 py-4">
+        <h2 class="text-sm font-semibold text-slate-900">Pending invitations <span class="ml-1 font-normal text-slate-400">{{ pending().length }}</span></h2>
+      </div>
+      @if (pending().length) {
+        <ul class="divide-y divide-slate-100">
+          @for (inv of pending(); track inv.id) {
+            <li class="flex items-center gap-3 px-5 py-3">
+              <lucide-icon [img]="icons.Mail" [size]="16" class="shrink-0 text-slate-400" />
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-medium text-slate-900">{{ inv.userName }}</p>
+                <p class="truncate text-xs text-slate-500">{{ inv.userEmail }} · sent {{ timeAgo(inv.createdAt) }}</p>
+              </div>
+              <button type="button" class="btn-ghost btn-sm text-slate-400 hover:text-red-600" (click)="cancelInvitation(inv)" aria-label="Cancel invitation"><lucide-icon [img]="icons.X" [size]="14" /></button>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="px-5 py-6 text-center text-sm text-slate-500">No invitations waiting.</p>
+      }
+    </section>
+  </div>
+</div>
